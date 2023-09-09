@@ -11,7 +11,7 @@ import {
     IconButton,
     List,
     ListItem,
-    ThemeProvider
+    ThemeProvider, Typography
 } from "@mui/material";
 // import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -75,7 +75,10 @@ export function Todolist(props: PropsType) {
 
 
     return <div>
-        <h3>
+        <Typography variant={"h5"}
+                    sx={{fontWeight:"bold"}}
+            align={"center"}
+        >
             <EditableSpan oldTitle={props.title}
                           onChange={todolistTitleChangeHandler}
             />
@@ -83,10 +86,12 @@ export function Todolist(props: PropsType) {
                         size={"small"}
             >
 
-                <DeleteForeverIcon fontSize={"small"}/>
+                <DeleteForeverIcon
+                    fontSize={"small"}
+                />
             </IconButton>
 
-        </h3>
+        </Typography>
         <AddItemForm addItem={addTask}/>
         <List>
             {
@@ -125,7 +130,7 @@ export function Todolist(props: PropsType) {
                 })
             }
         </List>
-        <div>
+        <div style={{display: "flex", justifyContent: "space-around"}}>
             <Button sx={{mr: "2px"}}
 
                     variant={"contained"}
