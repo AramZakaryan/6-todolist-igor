@@ -1,11 +1,17 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import {Button, TextField} from "@mui/material";
+import AddCircleOutline from '@mui/icons-material/AddCircleOutline';
 
 type AddItemFormPropsType = {
     addItem: (title: string) => void
 }
 export const AddItemForm: React.FC<AddItemFormPropsType> = (props) => {
-    let [title, setTitle] = useState("")
-    let [error, setError] = useState<string | null>(null)
+    const [title,
+        setTitle] =
+        useState("")
+    const [error,
+        setError] =
+        useState<boolean>(false)
 
     const addItem = () => {
         let newTitle = title.trim();
@@ -13,7 +19,7 @@ export const AddItemForm: React.FC<AddItemFormPropsType> = (props) => {
             props.addItem(newTitle);
             setTitle("");
         } else {
-            setError("Title is required");
+            setError(true);
         }
     }
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -21,20 +27,33 @@ export const AddItemForm: React.FC<AddItemFormPropsType> = (props) => {
     }
 
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(null);
+        setError(false);
         if (e.charCode === 13) {
             addItem();
         }
     }
 
 
-    return (<div>
-        <input value={title}
-               onChange={onChangeHandler}
-               onKeyPress={onKeyPressHandler}
-               className={error ? "error" : ""}
+    return (<div style={{display:"flex", alignItems: "center"}}
+    >
+        <TextField value={title}
+                   variant={"outlined"}
+                   size={"small"}
+                   sx={{mr: "5px"}}
+                   onChange={onChangeHandler}
+                   onKeyPress={onKeyPressHandler}
+                   className={error ? "error" : ""}
+                   error={error}
+                   helperText={error?"Title is required":undefined}
         />
-        <button onClick={addItem}>+</button>
-        {error && <div className="error-message">{error}</div>}
+        <Button variant={"contained"}
+                color={"primary"}
+                size={"small"}
+            // startIcon={<AddCircleOutline/>}
+                onClick={addItem}
+        >
+            {/*add*/}
+            <AddCircleOutline fontSize={"small"}/>
+        </Button>
     </div>)
 }

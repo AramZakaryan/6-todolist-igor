@@ -3,6 +3,8 @@ import React, {useState} from 'react';
 import {TaskType, Todolist} from './Todolist';
 import {v1} from 'uuid';
 import {AddItemForm} from "./AddItemForm";
+import {createTheme, ThemeProvider} from "@mui/material";
+import {blue, green, grey, lightGreen, red, yellow} from "@mui/material/colors";
 
 export type FilterValuesType = "all" | "active" | "completed";
 type TodolistType = {
@@ -100,56 +102,66 @@ function App() {
         setTasks({...tasks});
     }
 
-    const addTodolist =(title:string) => {
-        let newTodolistId:string = v1()
+    const addTodolist = (title: string) => {
+        let newTodolistId: string = v1()
         let newTodolist: TodolistType = {id: newTodolistId, title: title, filter: "all"}
         setTodolists([...todolists, newTodolist])
-        setTasks ({...tasks, [newTodolistId]:[]})
+        setTasks({...tasks, [newTodolistId]: []})
     }
 
-    const changeTodolistTitle= (todolistId: string,title: string)=>{ // title is a new title
-       // let todolistToBeChanged= todolists.find(tl => tl.id === todolistId)
-       //  if (todolistToBeChanged){
-       //      todolistToBeChanged.title=title
-       //      setTodolists([...todolists])
-       //  }
-             setTodolists(todolists.map(tl=>tl.id===todolistId?{...tl, title}:tl))
+    const changeTodolistTitle = (todolistId: string, title: string) => { // title is a new title
+        // let todolistToBeChanged= todolists.find(tl => tl.id === todolistId)
+        //  if (todolistToBeChanged){
+        //      todolistToBeChanged.title=title
+        //      setTodolists([...todolists])
+        //  }
+        setTodolists(todolists.map(tl => tl.id === todolistId ? {...tl, title} : tl))
     }
+
+    const myTheme = createTheme({
+        palette: {
+            primary: {main: yellow.A400},
+            secondary: {main: grey["300"]},
+            success: {main: red.A700}
+
+        }
+    })
 
     return (
+        <ThemeProvider theme={myTheme}>
+            <div className="App" style={{alignItems:"flex-start"}}>
+                <AddItemForm addItem={addTodolist}/>
+                {
+                    todolists.map(tl => {
+                        let allTodolistTasks = tasks[tl.id];
+                        let tasksForTodolist = allTodolistTasks;
 
-        <div className="App">
-            <AddItemForm addItem={addTodolist}/>
-            {
-                todolists.map(tl => {
-                    let allTodolistTasks = tasks[tl.id];
-                    let tasksForTodolist = allTodolistTasks;
+                        if (tl.filter === "active") {
+                            tasksForTodolist = allTodolistTasks.filter(t => t.isDone === false);
+                        }
+                        if (tl.filter === "completed") {
+                            tasksForTodolist = allTodolistTasks.filter(t => t.isDone === true);
+                        }
 
-                    if (tl.filter === "active") {
-                        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === false);
-                    }
-                    if (tl.filter === "completed") {
-                        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === true);
-                    }
+                        return <Todolist
+                            key={tl.id}
+                            id={tl.id}
+                            title={tl.title}
+                            tasks={tasksForTodolist}
+                            removeTask={removeTask}
+                            changeFilter={changeFilter}
+                            addTask={addTask}
+                            changeTaskStatus={changeStatus}
+                            filter={tl.filter}
+                            removeTodolist={removeTodolist}
+                            changeTaskTitle={changeTaskTitle}
+                            changeTodolistTitle={changeTodolistTitle}
+                        />
+                    })
+                }
 
-                    return <Todolist
-                        key={tl.id}
-                        id={tl.id}
-                        title={tl.title}
-                        tasks={tasksForTodolist}
-                        removeTask={removeTask}
-                        changeFilter={changeFilter}
-                        addTask={addTask}
-                        changeTaskStatus={changeStatus}
-                        filter={tl.filter}
-                        removeTodolist={removeTodolist}
-                        changeTaskTitle={changeTaskTitle}
-                        changeTodolistTitle={changeTodolistTitle}
-                    />
-                })
-            }
-
-        </div>
+            </div>
+        </ThemeProvider>
     );
 }
 
